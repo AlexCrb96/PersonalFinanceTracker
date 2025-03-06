@@ -11,8 +11,16 @@ namespace PersonalFinanceTrackerDataAccess.Entities
     {
         public int Id { get; set; }
 
+        // TODO: make sure foreign keys are properly configured
+        // Relationships
+        public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>(); // A category can have multiple transactions
+        public ICollection<CategoryBudget> CategoryBudgets { get; set; } = new List<CategoryBudget>(); // A category can have multiple budgets
+
+        // Category details
         [Required(ErrorMessage = "Category name is required.")]
         [StringLength(50, ErrorMessage = "Category name cannot exceed 50 characters.")]
         public string Name { get; set; }
+
+
     }
 }

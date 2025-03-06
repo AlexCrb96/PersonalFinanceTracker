@@ -11,17 +11,21 @@ namespace PersonalFinanceTrackerDataAccess.Entities
     {
         public int Id { get; set; }
 
+        // TODO: make sure foreign keys are properly configured
+        // Relationships
+        public int? FamilyId { get; set; } // Foreing key to Family. If not null, belongs to a Faimly
+        public Family? Family { get; set; } // A budget should belong to a family
+        public int? UserId { get; set; } // Foreign key to User. If not null, belongs to a User
+        public User? User { get; set; } // A budget can belong to a user
+
+        // Budget details
         [Required(ErrorMessage = "Budget name is required.")]
         [StringLength(50, ErrorMessage = "Budget name cannot exceed 50 characters.")]
         public string Name { get; set; }
-
-        public decimal Total { get; set; }
-        public decimal TotalIncome { get; set; }
-        public decimal TotalSpent { get; set; }
-
-        public List<Transaction> Incomes { get; set; } = new List<Transaction>();
-        public List<Transaction> Expenses { get; set; } = new List<Transaction>();
-
+        [Required(ErrorMessage = "Budget limit is required.")]
+        [Range(0.01, 10000000, ErrorMessage = "Budget limit must be greater than 0.")]
+        public decimal Limit { get; set; }
+        public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
         [Required(ErrorMessage = "Start Date is required.")]
         [DataType(DataType.Date)]
         [Range(typeof(DateTime), "01/01/2022", "12/31/9999", ErrorMessage = "Start Date must be a valid date.")]
@@ -30,5 +34,6 @@ namespace PersonalFinanceTrackerDataAccess.Entities
         [DataType(DataType.Date)]
         [Range(typeof(DateTime), "01/01/2022", "12/31/9999", ErrorMessage = "End Date must be a valid date.")]
         public DateTime EndDate { get; set; }
+        public ICollection<CategoryBudget> CategoryBudgets { get; set; } = new List<CategoryBudget>(); // Category specific budgets
     }
 }
