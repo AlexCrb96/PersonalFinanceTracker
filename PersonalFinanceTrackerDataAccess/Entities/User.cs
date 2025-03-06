@@ -27,6 +27,7 @@ namespace PersonalFinanceTrackerDataAccess.Entities
         public string PasswordHash { get; set; }
         [Required(ErrorMessage = "Email is required.")]
         [EmailAddress(ErrorMessage = "Invalid email address.")]
+        [StringLength(50, ErrorMessage = "Email must not exceed 50 characters.")]
         public string Email { get; set; }
         [Required(ErrorMessage = "Role is required.")]
         [StringLength(50, ErrorMessage = "Role must not exceed 50 characters.")]
