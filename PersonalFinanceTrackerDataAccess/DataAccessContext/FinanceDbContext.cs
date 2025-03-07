@@ -64,7 +64,7 @@ namespace PersonalFinanceTrackerDataAccess.DataAccessContext
                 .HasOne(t => t.User) // Transaction has one User
                 .WithMany(u => u.Transactions) // User has many Transactions
                 .HasForeignKey(t => t.UserId) // Foreign key in Transaction table
-                .OnDelete(DeleteBehavior.SetNull); // If a User is deleted, set UserId in Transaction to null
+                .OnDelete(DeleteBehavior.Cascade); // If a User is deleted, its transactions will also be deleted (Cascade)
 
         }
     }
