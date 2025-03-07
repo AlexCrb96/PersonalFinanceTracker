@@ -43,7 +43,7 @@ namespace PersonalFinanceTrackerDataAccess.DataAccessContext
                 .HasMany(f => f.Members) // Family has many Members (Users)
                 .WithOne(u => u.Family) // User belongs to one Family
                 .HasForeignKey(u => u.FamilyId) // Foreign key in User table
-                .OnDelete(DeleteBehavior.Cascade); // If a Family is deleted, the corresponding Users are also deleted (Cascade)
+                .OnDelete(DeleteBehavior.SetNull); // Set FamilyId to NULL if the family is deleted
 
             // Define One-to-One relationship between Family and Budget
             modelBuilder.Entity<Family>()
