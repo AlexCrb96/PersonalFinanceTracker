@@ -38,6 +38,13 @@ namespace PersonalFinanceTrackerDataAccess.DataAccessContext
                 .HasForeignKey<Family>(f => f.FamilyLeaderId) // Foreign key in Family table
                 .OnDelete(DeleteBehavior.Restrict); // Prevent deletion of FamilyLeader if Family exists
 
+            // Define One-to-Many relationship between Family and Members (Users)
+            modelBuilder.Entity<Family>()
+                .HasMany(f => f.Members) // Family has many Members (Users)
+                .WithOne(u => u.Family) // User belongs to one Family
+                .HasForeignKey(u => u.FamilyId) // Foreign key in User table
+                .OnDelete(DeleteBehavior.Cascade); // If a Family is deleted, the corresponding Users are also deleted (Cascade)
+
             // Define One-to-One relationship between Family and Budget
             modelBuilder.Entity<Family>()
                 .HasOne(f => f.GeneralBudget)  // Family has one GeneralBudget
@@ -51,6 +58,13 @@ namespace PersonalFinanceTrackerDataAccess.DataAccessContext
                 .WithOne(b => b.User)          // Budget belongs to a User
                 .HasForeignKey<Budget>(b => b.UserId) // Foreign key in Budget table
                 .OnDelete(DeleteBehavior.Cascade); // If a User is deleted, the corresponding Budget is also deleted (Cascade)
+
+            // Define One-to-Many relationship between User and Transaction
+            modelBuilder.Entity<Transaction>()
+                .HasOne(t => t.User) // Transaction has one User
+                .WithMany(u => u.Transactions) // User has many Transactions
+                .HasForeignKey(t => t.UserId) // Foreign key in Transaction table
+                .OnDelete(DeleteBehavior.SetNull); // If a User is deleted, set UserId in Transaction to null
 
         }
     }

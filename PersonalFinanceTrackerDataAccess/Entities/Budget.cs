@@ -15,7 +15,7 @@ namespace PersonalFinanceTrackerDataAccess.Entities
         // Relationships
         public int? FamilyId { get; set; } // Foreing key to Family. If not null, belongs to a Faimly
         public Family? Family { get; set; } // A budget should belong to a family
-        public int? UserId { get; set; } // Foreign key to User. If not null, belongs to a User
+        public string? UserId { get; set; } // Foreign key to User. If not null, belongs to a User
         public User? User { get; set; } // A budget can belong to a user
 
         // Budget details

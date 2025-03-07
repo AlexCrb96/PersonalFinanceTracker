@@ -14,7 +14,7 @@ namespace PersonalFinanceTrackerDataAccess.Entities
 
         // TODO: make sure foreign keys are properly configured
         // Relationships
-        public required int UserId { get; set; } // Foreign key to User
+        public required string UserId { get; set; } // Foreign key to User
         public required User User { get; set; } // Each transaction belongs to one user
         public required int CategoryId { get; set; } // Foreign key to Category
         public required Category Category { get; set; } // Each transaction belongs to one category
@@ -30,8 +30,6 @@ namespace PersonalFinanceTrackerDataAccess.Entities
         public TransactionType Type { get; set; }
 
 
-
-        // TODO: make sure to convert enum from int to string when creating the table
         public enum TransactionType
         {
             Income,
