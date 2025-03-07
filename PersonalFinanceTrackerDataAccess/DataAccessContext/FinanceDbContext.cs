@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PersonalFinanceTrackerDataAccess.Entities;
 using System;
 using System.Collections.Generic;
@@ -8,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace PersonalFinanceTrackerDataAccess.DataAccessContext
 {
-    public class FinanceDbContext : DbContext
+    public class FinanceDbContext : IdentityDbContext<User>
     {
-        public FinanceDbContext(DbContextOptions options) : base(options) { }
+        public FinanceDbContext(DbContextOptions<FinanceDbContext> options) : base(options) { }
 
         public DbSet<User> Users { get; set; }
         public DbSet<Family> Families { get; set; }
@@ -22,6 +23,9 @@ namespace PersonalFinanceTrackerDataAccess.DataAccessContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Ensure base Identity model configuration is applied
+            base.OnModelCreating(modelBuilder);
+
             // Define Enum conversions to store their string values in the database instead of integer values
             modelBuilder.Entity<Transaction>().Property(t => t.Type).HasConversion<string>().HasMaxLength(20);
             modelBuilder.Entity<User>().Property(u => u.Role).HasConversion<string>().HasMaxLength(20);
@@ -48,10 +52,6 @@ namespace PersonalFinanceTrackerDataAccess.DataAccessContext
                 .HasForeignKey<Budget>(b => b.UserId) // Foreign key in Budget table
                 .OnDelete(DeleteBehavior.Cascade); // If a User is deleted, the corresponding Budget is also deleted (Cascade)
 
-            // Define max length for password hash in User table
-            modelBuilder.Entity<User>()
-                .Property(u => u.PasswordHash)
-                .HasMaxLength(128);
         }
     }
 }
