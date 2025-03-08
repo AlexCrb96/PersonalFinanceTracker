@@ -19,17 +19,13 @@ namespace PersonalFinanceTrackerDataAccess.Entities
         public Budget? PersonalBudget { get; set; } // Only used when not part of a family
 
         // User details
-        [Required(ErrorMessage = "Role is required.")]
-        [StringLength(50, ErrorMessage = "Role must not exceed 50 characters.")]
-        public UserRole Role { get; set; }
+        [Required]
+        [StringLength(50, ErrorMessage = "First name must not exceed 50 characters.")]
+        public string FirstName { get; set; }
+        [Required]
+        [StringLength(50, ErrorMessage = "Last name must not exceed 50 characters.")]
+        public string LastName { get; set; }
         public readonly DateTime DateJoined = DateTime.UtcNow;
 
-
-        public enum UserRole
-        {
-            Child, // Read only user
-            Adult, // Standard user - Can manage personal transactions and make requests to alter budgets.
-            FamilyLeader // Full user - Can manage budgets, invite others and set roles.
-        }
     }
 }

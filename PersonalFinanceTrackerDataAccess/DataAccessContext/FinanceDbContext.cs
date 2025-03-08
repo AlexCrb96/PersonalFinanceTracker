@@ -28,7 +28,6 @@ namespace PersonalFinanceTrackerDataAccess.DataAccessContext
 
             // Define Enum conversions to store their string values in the database instead of integer values
             modelBuilder.Entity<Transaction>().Property(t => t.Type).HasConversion<string>().HasMaxLength(20);
-            modelBuilder.Entity<User>().Property(u => u.Role).HasConversion<string>().HasMaxLength(20);
             modelBuilder.Entity<RecurringTransaction>().Property(rt => rt.Frequency).HasConversion<string>().HasMaxLength(20);
 
             // Define One-to-One relationship between Family and FamilyLeader (User)
