@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PersonalFinanceTrackerDataAccess.DataAccessContext;
 using PersonalFinanceTrackerDataAccess.Entities;
+using PersonalFinanceTrackerDataAccess.Services;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,6 +51,9 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = jwtSettings["Audience"]
     };
 });
+
+// Add services
+builder.Services.AddScoped<UserService>();
 
 builder.Services.AddAuthorization();
 

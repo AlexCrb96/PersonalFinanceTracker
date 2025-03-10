@@ -20,11 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="DataTransferObjects\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\PersonalFinanceTrackerDataAccess\PersonalFinanceTrackerDataAccess.csproj" />
   </ItemGroup>
 
