@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace PersonalFinanceTrackerDataAccess.Entities
 
         // Category budget details
         [Required(ErrorMessage = "Category budget limit is required.")]
+        [Precision(18, 2)]
         [Range(0.01, 10000000, ErrorMessage = "Budget limit must be greater than zero.")]
         public decimal Limit { get; set; }
     }

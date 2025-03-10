@@ -25,7 +25,8 @@ namespace PersonalFinanceTrackerDataAccess.Entities
         [Required]
         [StringLength(50, ErrorMessage = "Last name must not exceed 50 characters.")]
         public string LastName { get; set; }
-        public readonly DateTime DateJoined = DateTime.UtcNow;
+        [Required]
+        public DateTime DateJoined { get; private set; } = DateTime.UtcNow;
 
     }
 }

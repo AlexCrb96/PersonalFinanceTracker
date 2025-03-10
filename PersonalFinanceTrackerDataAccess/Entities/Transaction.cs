@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
@@ -21,6 +22,7 @@ namespace PersonalFinanceTrackerDataAccess.Entities
 
         // Transaction details
         [Required(ErrorMessage = "Transaction amount is required.")]
+        [Precision(18, 2)]
         [Range(0.01, 1000000, ErrorMessage = "Transaction amount must be grater than 0.")]
         public decimal Amount { get; set; }
         public DateTime Date { get; set; } = DateTime.UtcNow;

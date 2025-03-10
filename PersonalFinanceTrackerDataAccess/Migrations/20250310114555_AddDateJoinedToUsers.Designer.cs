@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PersonalFinanceTrackerDataAccess.DataAccessContext;
 
@@ -11,9 +12,11 @@ using PersonalFinanceTrackerDataAccess.DataAccessContext;
 namespace PersonalFinanceTrackerDataAccess.Migrations
 {
     [DbContext(typeof(FinanceDbContext))]
-    partial class FinanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250310114555_AddDateJoinedToUsers")]
+    partial class AddDateJoinedToUsers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -170,7 +173,6 @@ namespace PersonalFinanceTrackerDataAccess.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Limit")
-                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Name")
@@ -230,7 +232,6 @@ namespace PersonalFinanceTrackerDataAccess.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Limit")
-                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
@@ -279,7 +280,6 @@ namespace PersonalFinanceTrackerDataAccess.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Amount")
-                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("BudgetId")

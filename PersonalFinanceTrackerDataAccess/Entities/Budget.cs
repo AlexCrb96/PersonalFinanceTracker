@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -23,6 +24,7 @@ namespace PersonalFinanceTrackerDataAccess.Entities
         [StringLength(50, ErrorMessage = "Budget name cannot exceed 50 characters.")]
         public string Name { get; set; }
         [Required(ErrorMessage = "Budget limit is required.")]
+        [Precision(18, 2)]
         [Range(0.01, 10000000, ErrorMessage = "Budget limit must be greater than 0.")]
         public decimal Limit { get; set; }
         public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
