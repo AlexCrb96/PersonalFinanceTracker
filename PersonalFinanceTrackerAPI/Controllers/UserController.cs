@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using PersonalFinanceTrackerAPI.DataTransferObjects;
+using PersonalFinanceTrackerAPI.DataTransferObjects.Requests;
 using PersonalFinanceTrackerDataAccess.Entities;
 using PersonalFinanceTrackerDataAccess.Services;
 using System.IdentityModel.Tokens.Jwt;

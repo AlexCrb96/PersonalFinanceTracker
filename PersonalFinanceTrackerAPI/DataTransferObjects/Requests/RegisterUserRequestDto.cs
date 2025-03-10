@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace PersonalFinanceTrackerAPI.DataTransferObjects
+namespace PersonalFinanceTrackerAPI.DataTransferObjects.Requests
 {
     public class RegisterUserRequestDto
     {
