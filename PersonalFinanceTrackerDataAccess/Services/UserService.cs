@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using PersonalFinanceTrackerDataAccess.DataAccessContext;
 using PersonalFinanceTrackerDataAccess.Entities;
 using System;
 using System.Collections.Generic;
@@ -12,11 +13,13 @@ namespace PersonalFinanceTrackerDataAccess.Services
 {
     public class UserService
     {
+        private readonly FinanceDbContext _db;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
 
-        public UserService(UserManager<User> userManager, SignInManager<User> signInManager)
+        public UserService(FinanceDbContext context, UserManager<User> userManager, SignInManager<User> signInManager)
         {
+            _db = context;
             _userManager = userManager;
             _signInManager = signInManager;
         }
@@ -39,7 +42,7 @@ namespace PersonalFinanceTrackerDataAccess.Services
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
-                return (false, null, "Invalid e-mail.");
+                return (false, user, "Invalid e-mail.");
             }
 
             var loginResult = await _signInManager.CheckPasswordSignInAsync(user, password, false);
@@ -49,6 +52,20 @@ namespace PersonalFinanceTrackerDataAccess.Services
             }
 
             return (true, user, null);
+        }
+
+        public async Task AssignUserToFamily(User user, int? familyId, User.Role? familyRole)
+        {
+            if (familyId != null && familyRole == null)
+            {
+                throw new ArgumentException("A role must be assigned when user is part of a family.");
+            }
+
+            user.FamilyId = familyId;
+            user.FamilyRole = familyRole;
+
+            _db.Users.Update(user);
+            await _db.SaveChangesAsync();
         }
     }
 }

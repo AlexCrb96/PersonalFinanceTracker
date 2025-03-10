@@ -27,6 +27,14 @@ namespace PersonalFinanceTrackerDataAccess.Entities
         public string LastName { get; set; }
         [Required]
         public DateTime DateJoined { get; private set; } = DateTime.UtcNow;
+        public Role? FamilyRole { get; set; } // Role of the user in the family
+
+        public enum Role
+        {
+            Child, // Read-Only User: Can only view what's going on.
+            Adult, // Standard User: Can manage personal transactions and make requests to alter budgets.
+            HeadOfFamily // Family User: Can manage budgets and invite others.
+        }
 
     }
 }
