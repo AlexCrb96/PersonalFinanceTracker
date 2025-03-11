@@ -54,6 +54,7 @@ builder.Services.AddAuthentication(options =>
 
 // Add services
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<FamilyService>();
 
 builder.Services.AddAuthorization();
 

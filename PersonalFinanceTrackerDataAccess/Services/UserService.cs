@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using PersonalFinanceTrackerDataAccess.DataAccessContext;
 using PersonalFinanceTrackerDataAccess.Entities;
@@ -22,6 +23,16 @@ namespace PersonalFinanceTrackerDataAccess.Services
             _db = context;
             _userManager = userManager;
             _signInManager = signInManager;
+        }
+
+        public async Task<User?> GetUserByIdAsync(string id)
+        {
+            return await _userManager.FindByIdAsync(id);
+        }
+
+        public async Task<List<User>> GetUsersByIdsAsync(IEnumerable<string> ids)
+        {
+            return await _db.Users.Where(u => ids.Contains(u.Id)).ToListAsync();
         }
 
         public async Task<(bool Success, IEnumerable<string> Errors)> RegisterUserAsync(User input, string inputPassword)
@@ -54,14 +65,10 @@ namespace PersonalFinanceTrackerDataAccess.Services
             return (true, user, null);
         }
 
-        public async Task AssignUserToFamily(User user, int? familyId, User.Role? familyRole)
+        public async Task AssignUserToFamilyAsync(User user, Family family, User.Role? familyRole = null)
         {
-            if (familyId != null && familyRole == null)
-            {
-                throw new ArgumentException("A role must be assigned when user is part of a family.");
-            }
-
-            user.FamilyId = familyId;
+            user.FamilyId = family.Id;
+            user.Family = family;
             user.FamilyRole = familyRole;
 
             _db.Users.Update(user);
