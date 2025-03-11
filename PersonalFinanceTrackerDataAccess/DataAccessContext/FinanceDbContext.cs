@@ -31,12 +31,12 @@ namespace PersonalFinanceTrackerDataAccess.DataAccessContext
             modelBuilder.Entity<RecurringTransaction>().Property(rt => rt.Frequency).HasConversion<string>().HasMaxLength(20);
             modelBuilder.Entity<User>().Property(u => u.FamilyRole).HasConversion<string>().HasMaxLength(20);
 
-            // Define One-to-One relationship between Family and FamilyLeader (User)
+            // Define One-to-One relationship between Family and HeadOfFamily (User)
             modelBuilder.Entity<Family>()
-                .HasOne(f => f.FamilyLeader) // Family has one FamilyLeader (User)
+                .HasOne(f => f.HeadOfFamily) // Family has one HeadOfFamily (User)
                 .WithOne() // No inverse navigation needed
-                .HasForeignKey<Family>(f => f.FamilyLeaderId) // Foreign key in Family table
-                .OnDelete(DeleteBehavior.Restrict); // Prevent deletion of FamilyLeader if Family exists
+                .HasForeignKey<Family>(f => f.HeadOfFamilyId) // Foreign key in Family table
+                .OnDelete(DeleteBehavior.Restrict); // Prevent deletion of HeadOfFamily if Family exists
 
             // Define One-to-Many relationship between Family and Members (Users)
             modelBuilder.Entity<Family>()

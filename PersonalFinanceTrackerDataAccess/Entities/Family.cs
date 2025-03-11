@@ -13,8 +13,8 @@ namespace PersonalFinanceTrackerDataAccess.Entities
 
         // TODO: make sure foreign keys are properly configured
         // Relationships
-        public string FamilyLeaderId { get; set; } // Foreign key to family leader User
-        public User FamilyLeader { get; set; } // Each family can have one leader
+        public string HeadOfFamilyId { get; set; } // Foreign key to family leader User
+        public User HeadOfFamily { get; set; } // Each family can have one leader
         public ICollection<User> Members { get; set; } = new List<User>(); // Each family can have multiple members.
         public int? BudgetId { get; set; } // Foreign key to general budget
         public Budget? GeneralBudget { get; set; } // Each family has one general budget
