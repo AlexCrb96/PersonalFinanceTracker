@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using PersonalFinanceTrackerDataAccess.DataAccessContext;
 using PersonalFinanceTrackerDataAccess.Entities;
 using PersonalFinanceTrackerDataAccess.Services;
+using PersonalFinanceTrackerDataAccess.Validators;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -55,6 +56,7 @@ builder.Services.AddAuthentication(options =>
 // Add services
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<FamilyService>();
+builder.Services.AddScoped<FamilyValidator>();
 
 builder.Services.AddAuthorization();
 

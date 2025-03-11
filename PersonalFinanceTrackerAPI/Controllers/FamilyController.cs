@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PersonalFinanceTrackerAPI.DataTransferObjects.Requests;
+using PersonalFinanceTrackerDataAccess.Validators;
 using PersonalFinanceTrackerDataAccess.Entities;
 using PersonalFinanceTrackerDataAccess.Services;
+using System.ComponentModel.DataAnnotations;
 
 namespace PersonalFinanceTrackerAPI.Controllers
 {
@@ -11,11 +13,13 @@ namespace PersonalFinanceTrackerAPI.Controllers
     {
         private readonly UserService _userService;
         private readonly FamilyService _familyService;
+        private readonly FamilyValidator _familyValidator;
 
-        public FamilyController(UserService userService, FamilyService familyService)
+        public FamilyController(UserService userService, FamilyService familyService, FamilyValidator familyValidator)
         {
             _userService = userService;
             _familyService = familyService;
+            _familyValidator = familyValidator;
         }
 
         [HttpPost("create")]
@@ -27,14 +31,13 @@ namespace PersonalFinanceTrackerAPI.Controllers
             }
 
             User? headOfFamily = await _userService.GetUserByIdAsync(input.HeadOfFamilyId);
-            if (headOfFamily == null)
+            try
             {
-                return BadRequest("Head of family User not found.");
+                _familyValidator.ValidateHeadOfFamily(headOfFamily);
             }
-
-            if (headOfFamily.FamilyId != null)
+            catch(ValidationException e)
             {
-                return BadRequest("User is already a member of a family.");
+                return BadRequest(e.Message);
             }
 
             Family inputFamily = new Family
@@ -45,9 +48,9 @@ namespace PersonalFinanceTrackerAPI.Controllers
             };
 
             inputFamily.Id = await _familyService.CreateFamilyAsync(inputFamily);
-            await _userService.AssignUserToFamilyAsync(headOfFamily, inputFamily, PersonalFinanceTrackerDataAccess.Entities.User.Role.HeadOfFamily);
+            await _userService.AssignFamilyToUserAsync(headOfFamily, inputFamily, PersonalFinanceTrackerDataAccess.Entities.User.Role.HeadOfFamily);
 
-            return Ok();
+            return Ok($"FamilyId = {inputFamily.Id}");
         }
     }
 }
