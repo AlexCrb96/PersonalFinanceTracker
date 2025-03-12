@@ -29,6 +29,5 @@ namespace PersonalFinanceTrackerDataAccess.Repositories
 
         public void Delete(T entity) => _dbSet.Remove(entity);
 
-        public async Task SaveAsync() => await _db.SaveChangesAsync();
     }
 }

@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 
 namespace PersonalFinanceTrackerDataAccess.Repositories
 {
-    public interface IRepository<T, TId>
+    public interface IRepository<TEntity, TId>
     {
-        Task<List<T>> GetAllAsync();
-        Task<T?> GetByIdAsync(TId id);
-        Task AddAsync(T entity);
-        void Update(T entity);
-        void Delete(T entity);
-        Task SaveAsync();
+        Task<List<TEntity>> GetAllAsync();
+        Task<TEntity?> GetByIdAsync(TId id);
+        Task AddAsync(TEntity entity);
+        void Update(TEntity entity);
+        void Delete(TEntity entity);
     }
 }

@@ -22,13 +22,12 @@ namespace PersonalFinanceTrackerDataAccess.Repositories
 
         public async Task<User?> FindByEmailAsync(string email) => await _dbSet.FirstOrDefaultAsync(u => u.Email == email);
 
-        public async Task AssignFamilyToUserAsync(User user, Family family, User.Role? familyRole = null)
+        public void AssignFamilyToUserAsync(User user, Family family, User.Role? familyRole = null)
         {
             user.FamilyId = family.Id;
             user.FamilyRole = familyRole;
 
             Update(user);
-            await SaveAsync();
         }
 
     }
