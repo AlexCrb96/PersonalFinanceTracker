@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PersonalFinanceTrackerDataAccess.DataAccessContext;
 using PersonalFinanceTrackerDataAccess.Entities;
+using PersonalFinanceTrackerDataAccess.Repositories;
 using PersonalFinanceTrackerDataAccess.Services;
 using PersonalFinanceTrackerDataAccess.Validators;
 using System.Text;
@@ -57,6 +58,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<FamilyService>();
 builder.Services.AddScoped<FamilyValidator>();
+builder.Services.AddScoped<UserRepository>();
 
 builder.Services.AddAuthorization();
 
