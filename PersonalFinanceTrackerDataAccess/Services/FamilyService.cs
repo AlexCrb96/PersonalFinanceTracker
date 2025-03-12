@@ -1,7 +1,12 @@
-﻿using PersonalFinanceTrackerDataAccess.DataAccessContext;
+﻿using Microsoft.AspNetCore.Mvc;
+using PersonalFinanceTrackerDataAccess.DataAccessContext;
 using PersonalFinanceTrackerDataAccess.Entities;
+using PersonalFinanceTrackerDataAccess.Repositories;
+using PersonalFinanceTrackerDataAccess.UnitOfWork;
+using PersonalFinanceTrackerDataAccess.Validators;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -11,18 +16,48 @@ namespace PersonalFinanceTrackerDataAccess.Services
 {
     public class FamilyService
     {
-        private readonly FinanceDbContext _db;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly FamilyValidator _familyValidator;
 
-        public FamilyService(FinanceDbContext context)
+        public FamilyService(IUnitOfWork unitOfWork, FamilyValidator familyValidator)
         {
-            _db = context;
+            _unitOfWork = unitOfWork;
+            _familyValidator = familyValidator;
         }
 
         public async Task<int> CreateFamilyAsync(Family input)
         {
-            _db.Families.Add(input);
-            await _db.SaveChangesAsync();
-            return input.Id;
+            var userRepo = _unitOfWork.GetRepository<UserRepository, User, string>();
+            var familyRepo = _unitOfWork.GetRepository<Family, int>();
+
+            User? headOfFamily = await userRepo.GetByIdAsync(input.HeadOfFamilyId);
+            _familyValidator.ValidateHeadOfFamily(headOfFamily);
+
+            input.HeadOfFamily = headOfFamily;
+
+            await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                await familyRepo.AddAsync(input);
+                await _unitOfWork.SaveAsync();
+
+                if (input.Id == 0)
+                {
+                    throw new Exception("Failed to create family.");
+                }
+
+                userRepo.AssignFamilyToUserAsync(headOfFamily, input, User.Role.HeadOfFamily);
+                
+                await _unitOfWork.SaveAsync();
+                await _unitOfWork.CommitAsync();
+
+                return input.Id;
+            }
+            catch
+            {
+                await _unitOfWork.RollbackAsync();
+                throw;
+            }
         }
     }
 }

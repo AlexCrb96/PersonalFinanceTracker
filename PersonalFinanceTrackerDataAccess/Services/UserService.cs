@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using PersonalFinanceTrackerDataAccess.DataAccessContext;
 using PersonalFinanceTrackerDataAccess.Entities;
 using PersonalFinanceTrackerDataAccess.Repositories;
+using PersonalFinanceTrackerDataAccess.UnitOfWork;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,18 +16,13 @@ namespace PersonalFinanceTrackerDataAccess.Services
 {
     public class UserService
     {
-        private readonly UserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly SignInManager<User> _signInManager;
 
-        public UserService(UserRepository userRepository, SignInManager<User> signInManager)
+        public UserService(IUnitOfWork unitOfWork, SignInManager<User> signInManager)
         {
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
             _signInManager = signInManager;
-        }
-
-        public async Task<User?> GetUserByIdAsync(string id)
-        {
-            return await _userRepository.GetByIdAsync(id);
         }
 
         public async Task<(bool Success, IEnumerable<string> Errors)> RegisterUserAsync(User input, string inputPassword)
@@ -44,7 +40,9 @@ namespace PersonalFinanceTrackerDataAccess.Services
 
         public async Task<(bool Success, User? User, string? Error)> LoginUserAsync(string email, string password)
         {
-            var user = await _userRepository.FindByEmailAsync(email);
+            var userRepo = _unitOfWork.GetRepository<UserRepository, User, string>();
+
+            var user = await userRepo.FindByEmailAsync(email);
             if (user == null)
             {
                 return (false, user, "Invalid e-mail.");
@@ -59,9 +57,5 @@ namespace PersonalFinanceTrackerDataAccess.Services
             return (true, user, null);
         }
 
-        public async Task AssignFamilyToUserAsync(User user, Family family, User.Role? familyRole = null)
-        {
-            await _userRepository.AssignFamilyToUserAsync(user, family, familyRole);
-        }
     }
 }
