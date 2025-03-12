@@ -11,15 +11,11 @@ namespace PersonalFinanceTrackerAPI.Controllers
     [ApiController]
     public class FamilyController : ControllerBase
     {
-        private readonly UserService _userService;
         private readonly FamilyService _familyService;
-        private readonly FamilyValidator _familyValidator;
 
-        public FamilyController(UserService userService, FamilyService familyService, FamilyValidator familyValidator)
+        public FamilyController(FamilyService familyService)
         {
-            _userService = userService;
             _familyService = familyService;
-            _familyValidator = familyValidator;
         }
 
         [HttpPost("create")]
@@ -30,27 +26,27 @@ namespace PersonalFinanceTrackerAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            User? headOfFamily = await _userService.GetUserByIdAsync(input.HeadOfFamilyId);
             try
             {
-                _familyValidator.ValidateHeadOfFamily(headOfFamily);
+                Family inputFamily = new Family
+                {
+                    Name = input.Name,
+                    HeadOfFamilyId = input.HeadOfFamilyId
+                };
+                int familyId = await _familyService.CreateFamilyAsync(inputFamily);
+                return Ok($"FamilyId = {familyId}");
             }
-            catch(ValidationException e)
+            catch (ValidationException ex)
             {
-                return BadRequest(e.Message);
+                return BadRequest(ex.Message);
             }
-
-            Family inputFamily = new Family
+            catch (Exception ex)
             {
-                Name = input.Name,
-                HeadOfFamilyId = headOfFamily.Id,
-                HeadOfFamily = headOfFamily
-            };
-
-            inputFamily.Id = await _familyService.CreateFamilyAsync(inputFamily);
-            await _userService.AssignFamilyToUserAsync(headOfFamily, inputFamily, PersonalFinanceTrackerDataAccess.Entities.User.Role.HeadOfFamily);
-
-            return Ok($"FamilyId = {inputFamily.Id}");
+                return Problem(
+                    detail: ex.Message,
+                    statusCode: StatusCodes.Status500InternalServerError,
+                    title: "Unexpected Server Error.");
+            }
         }
     }
 }
