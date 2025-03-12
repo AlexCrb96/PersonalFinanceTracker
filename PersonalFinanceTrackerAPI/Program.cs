@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.IdentityModel.Tokens;
 using PersonalFinanceTrackerDataAccess.DataAccessContext;
 using PersonalFinanceTrackerDataAccess.Entities;
 using PersonalFinanceTrackerDataAccess.Repositories;
 using PersonalFinanceTrackerDataAccess.Services;
+using PersonalFinanceTrackerDataAccess.UnitOfWork;
 using PersonalFinanceTrackerDataAccess.Validators;
 using System.Text;
 
@@ -59,6 +61,8 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<FamilyService>();
 builder.Services.AddScoped<FamilyValidator>();
 builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddAuthorization();
 
