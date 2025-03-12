@@ -10,7 +10,6 @@ namespace PersonalFinanceTrackerDataAccess.Entities
 {
     public class User : IdentityUser
     {
-        // TODO: make sure foreign keys are properly configured
         // Relationships
         public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>(); // A user can have multiple transactions
         public int? FamilyId { get; set; } // Foreign Key to Family

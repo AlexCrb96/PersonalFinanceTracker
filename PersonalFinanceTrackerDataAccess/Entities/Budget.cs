@@ -12,7 +12,6 @@ namespace PersonalFinanceTrackerDataAccess.Entities
     {
         public int Id { get; set; }
 
-        // TODO: make sure foreign keys are properly configured
         // Relationships
         public int? FamilyId { get; set; } // Foreing key to Family. If not null, belongs to a Faimly
         public Family? Family { get; set; } // A budget should belong to a family
