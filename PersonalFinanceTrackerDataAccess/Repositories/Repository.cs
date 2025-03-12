@@ -19,11 +19,11 @@ namespace PersonalFinanceTrackerDataAccess.Repositories
             _dbSet = _db.Set<T>();
         }
 
-        public virtual async Task<List<T>> GetAllAsync() => await _dbSet.ToListAsync();
+        public async Task<List<T>> GetAllAsync() => await _dbSet.ToListAsync();
 
         public virtual async Task<T?> GetByIdAsync(TId id) => await _dbSet.FindAsync(id);
 
-        public virtual async Task AddAsync(T entity) => await _dbSet.AddAsync(entity);
+        public async Task AddAsync(T entity) => await _dbSet.AddAsync(entity);
 
         public void Update(T entity) => _dbSet.Update(entity);
 
