@@ -1,14 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PersonalFinanceTrackerAPI.DataTransferObjects.Requests;
-using PersonalFinanceTrackerDataAccess.Validators;
 using PersonalFinanceTrackerDataAccess.Entities;
 using PersonalFinanceTrackerDataAccess.Services;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PersonalFinanceTrackerAPI.Controllers
 {
-    [Route("api/family")]
+    [Authorize]
     [ApiController]
+    [Route("api/family")]    
     public class FamilyController : ControllerBase
     {
         private readonly FamilyService _familyService;
