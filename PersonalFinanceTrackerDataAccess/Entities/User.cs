@@ -15,7 +15,7 @@ namespace PersonalFinanceTrackerDataAccess.Entities
         public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>(); // A user can have multiple transactions
         public int? FamilyId { get; set; } // Foreign Key to Family
         public Family? Family { get; set; } // A user can be part of one family
-        public int? BudgetId { get; set; } // Foreign Key to personal budget
+        public int? PersonalBudgetId { get; set; } // Foreign Key to personal budget
         public Budget? PersonalBudget { get; set; } // Only used when not part of a family
 
         // User details
