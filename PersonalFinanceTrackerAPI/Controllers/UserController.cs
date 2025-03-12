@@ -9,8 +9,8 @@ using System.Text;
 
 namespace PersonalFinanceTrackerAPI.Controllers
 {
-    [Route("api/user")]
     [ApiController]
+    [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
         private readonly UserService _userService;

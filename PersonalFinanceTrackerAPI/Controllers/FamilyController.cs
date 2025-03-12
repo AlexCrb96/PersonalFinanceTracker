@@ -9,7 +9,7 @@ namespace PersonalFinanceTrackerAPI.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api/family")]    
+    [Route("api/[controller]")]
     public class FamilyController : ControllerBase
     {
         private readonly FamilyService _familyService;
