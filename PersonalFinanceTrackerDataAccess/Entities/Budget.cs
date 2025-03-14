@@ -35,6 +35,8 @@ namespace PersonalFinanceTrackerDataAccess.Entities
         [DataType(DataType.Date)]
         [Range(typeof(DateTime), "01/01/2022", "12/31/9999", ErrorMessage = "End Date must be a valid date.")]
         public DateTime EndDate { get; set; }
+        [Required(ErrorMessage = "Recurring Period is required.")]
+        public RecurringPeriod Period { get; set; }
         public ICollection<CategoryBudget> CategoryBudgets { get; set; } = new List<CategoryBudget>(); // Category specific budgets
     }
 }

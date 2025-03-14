@@ -32,10 +32,6 @@ namespace PersonalFinanceTrackerDataAccess.Entities
         public TransactionType Type { get; set; }
 
 
-        public enum TransactionType
-        {
-            Income,
-            Expense
-        }
+        
     }
 }

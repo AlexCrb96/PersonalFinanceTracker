@@ -22,7 +22,7 @@ namespace PersonalFinanceTrackerDataAccess.Repositories
 
         public async Task<User?> FindByEmailAsync(string email) => await _dbSet.FirstOrDefaultAsync(u => u.Email == email);
 
-        public void AssignFamilyToUserAsync(User user, Family family, User.Role? familyRole = null)
+        public void AssignFamilyToUserAsync(User user, Family family, UserRole? familyRole = null)
         {
             user.FamilyId = family.Id;
             user.FamilyRole = familyRole;
