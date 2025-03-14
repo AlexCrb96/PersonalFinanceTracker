@@ -31,30 +31,20 @@ namespace PersonalFinanceTrackerDataAccess.Services
         public async Task<string> RegisterUserAsync(User input, string inputPassword)
         {
             var result = await _signInManager.UserManager.CreateAsync(input, inputPassword);
-            if (!result.Succeeded)
-            {
-                throw new ValidationException(result.GetErrorMessage());
-            }
+            result.ValidateRegisterResult();
 
             return input.Id;
         }
 
         public async Task<User> LoginUserAsync(User input, string inputPassword)
         {
-            var userRepo = _unitOfWork.GetRepository<UserRepository, User, string>();
+            var userRepo = _unitOfWork.GetRepository<UserRepository>();
 
             User user = await userRepo.FindByEmailAsync(input.Email);
-
-            if (!user.Exists())
-            {
-                throw new ValidationException("Invalid email.");
-            }
+            user.ValidateUserEmail();
 
             var loginResult = await _signInManager.CheckPasswordSignInAsync(user, inputPassword, false);
-            if (!loginResult.Succeeded)
-            {
-                throw new ValidationException("Invalid password.");
-            }
+            loginResult.ValidateUserPassword();
 
             return user;
         }

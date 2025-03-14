@@ -1,4 +1,6 @@
-﻿using PersonalFinanceTrackerDataAccess.Entities;
+﻿using Microsoft.AspNetCore.Identity;
+using PersonalFinanceTrackerDataAccess.Entities;
+using PersonalFinanceTrackerDataAccess.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -10,24 +12,31 @@ namespace PersonalFinanceTrackerDataAccess.Validators
 {
     public static class UserValidator
     {
-        public static bool Exists(this User user)
-        {
-            if (user == null)
-            {
-                return false;
-            }
+        public static bool Exists(this User user) => user != null;
+        public static bool IsPartOfAFamily(this User user) => user.FamilyId == null;
 
-            return true;
+        public static void ValidateRegisterResult(this IdentityResult result)
+        {
+            if (!result.Succeeded)
+            {
+                throw new ValidationException(result.GetErrorMessage());
+            }
         }
 
-        public static bool IsPartOfAFamily(this User user)
+        public static void ValidateUserEmail(this User user)
         {
-            if (user.FamilyId == null)
+            if (!user.Exists())
             {
-                return false;
+                throw new ValidationException("Invalid email.");
             }
+        }
 
-            return true;
+        public static void ValidateUserPassword(this SignInResult result)
+        {
+            if (!result.Succeeded)
+            {
+                throw new ValidationException("Invalid password.");
+            }
         }
     }
 }
