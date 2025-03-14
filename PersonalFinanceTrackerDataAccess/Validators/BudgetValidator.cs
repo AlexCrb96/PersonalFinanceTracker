@@ -8,25 +8,19 @@ using System.Threading.Tasks;
 
 namespace PersonalFinanceTrackerDataAccess.Validators
 {
-    public class BudgetValidator
+    public static class BudgetValidator
     {
-        public void ValidateIsPersonal (User user)
+        public static void ValidateIsPersonal (this Budget budget)
         {
-            ValidateUserExists(user);
+            if (!budget.User.Exists())
+            {
+                throw new ValidationException("User does not exist.");
+            }
 
-            if (user.FamilyId != null)
+            if (!budget.User.IsPartOfAFamily())
             {
                 throw new ValidationException("User is part of a family. Use the family budget instead.");
             }
         }
-
-        private void ValidateUserExists(User user)
-        {
-            if (user == null)
-            {
-                throw new ValidationException("User not found.");
-            }
-        }
-
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PersonalFinanceTrackerAPI.DataTransferObjects.Requests;
+using PersonalFinanceTrackerAPI.Mapping.Requests;
 using PersonalFinanceTrackerDataAccess.Entities;
 using PersonalFinanceTrackerDataAccess.Services;
 using System.ComponentModel.DataAnnotations;
@@ -29,15 +30,8 @@ namespace PersonalFinanceTrackerAPI.Controllers
             }
             try
             {
-                Budget inputBudget = new Budget
-                {
-                    UserId = input.UserId,
-                    FamilyId = null, // Mark it as personal budget
-                    Name = input.Name,
-                    Limit = input.Limit,
-                    StartDate = DateTime.UtcNow,
-                    EndDate = input.EndDate,
-                };
+                (DateTime startDate, DateTime endDate) =_budgetService.GetDates(input.Period);
+                Budget inputBudget = input.ToBudget(startDate, endDate);
                 int budgetId = await _budgetService.CreatePersonalBudgetAsync(inputBudget);
                 return Ok($"BudgetId = {budgetId}");
             }
