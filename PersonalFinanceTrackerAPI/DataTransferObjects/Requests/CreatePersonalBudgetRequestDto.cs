@@ -17,7 +17,6 @@ namespace PersonalFinanceTrackerAPI.DataTransferObjects.Requests
         public decimal Limit { get; set; }
 
         [Required(ErrorMessage = "Budget period is required.")]
-        [StringLength(20, ErrorMessage = "Budget period cannot exceed 20 characters.")]
         public RecurringPeriod Period { get; set; }
     }
 }
