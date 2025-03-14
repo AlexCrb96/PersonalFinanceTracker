@@ -23,11 +23,11 @@ namespace PersonalFinanceTrackerDataAccess.Services
 
         public async Task<int> CreatePersonalBudgetAsync (Budget inputBudget)
         {
-            var userRepository = _unitOfWork.GetRepository<User, string>();
+            var userRepository = _unitOfWork.GetRepository<UserRepository>();
             var budgetRepository = _unitOfWork.GetRepository<Budget, int>();
 
             var user = await userRepository.GetByIdAsync(inputBudget.UserId);
-            inputBudget.ValidateIsPersonal();
+            user.ValidatePersonalBudget();
 
             await _unitOfWork.BeginTransactionAsync();
             try
@@ -35,9 +35,7 @@ namespace PersonalFinanceTrackerDataAccess.Services
                 await budgetRepository.AddAsync(inputBudget);
                 await _unitOfWork.SaveAsync();
 
-                user.PersonalBudgetId = inputBudget.Id;
-                userRepository.Update(user);
-
+                userRepository.AssignBudgetToUser(user, inputBudget);
                 await _unitOfWork.SaveAsync();
                 await _unitOfWork.CommitAsync();
 

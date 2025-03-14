@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.DependencyInjection;
 using PersonalFinanceTrackerDataAccess.DataAccessContext;
 using PersonalFinanceTrackerDataAccess.Repositories;
 using System;
@@ -15,7 +16,6 @@ namespace PersonalFinanceTrackerDataAccess.UnitOfWork
         private readonly FinanceDbContext _context;
         private readonly IServiceProvider _serviceProvider;
         private IDbContextTransaction? _transaction;
-        private readonly Dictionary<Type, object> _repositories = new Dictionary<Type, object>();
 
         public UnitOfWork(FinanceDbContext db, IServiceProvider serviceProvider)
         {
@@ -23,26 +23,9 @@ namespace PersonalFinanceTrackerDataAccess.UnitOfWork
             _serviceProvider = serviceProvider;
         }
 
-        public TRepository GetRepository<TRepository, TEntity, TId>() where TEntity : class where TRepository : class, IRepository<TEntity, TId>
-        {
-            if (!_repositories.TryGetValue(typeof(TEntity), out var outputRepo))
-            {
-                // Try to get custom repository from DI if it's registered
-                outputRepo = _serviceProvider.GetService(typeof(TRepository)) as TRepository;
+        public TRepository GetRepository<TRepository>() where TRepository : class => (TRepository)_serviceProvider.GetRequiredService(typeof(TRepository));
 
-                // If custom repository is not registered, use default repository
-                if (outputRepo == null)
-                {
-                    outputRepo = new Repository<TEntity, TId>(_context);
-                }
-
-                _repositories.Add(typeof(TEntity), outputRepo);
-            }
-
-            return (TRepository)outputRepo;
-        }
-
-        public IRepository<TEntity, TId> GetRepository<TEntity, TId>() where TEntity : class => GetRepository<Repository<TEntity, TId>, TEntity, TId>();
+        public IRepository<TEntity, TId> GetRepository<TEntity, TId>() where TEntity : class => new Repository<TEntity, TId>(_context);
 
         public async Task BeginTransactionAsync() => _transaction = await _context.Database.BeginTransactionAsync();
 
@@ -69,7 +52,7 @@ namespace PersonalFinanceTrackerDataAccess.UnitOfWork
             _transaction.Dispose();
             _transaction = null;
         }
-
+        
         public async Task SaveAsync() => await _context.SaveChangesAsync();
 
         public void Dispose()

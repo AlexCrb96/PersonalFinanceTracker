@@ -25,7 +25,7 @@ namespace PersonalFinanceTrackerDataAccess.Services
 
         public async Task<int> CreateFamilyAsync(Family input)
         {
-            var userRepo = _unitOfWork.GetRepository<UserRepository, User, string>();
+            var userRepo = _unitOfWork.GetRepository<UserRepository>();
             var familyRepo = _unitOfWork.GetRepository<Family, int>();
 
             User? headOfFamily = await userRepo.GetByIdAsync(input.HeadOfFamilyId);
@@ -45,7 +45,7 @@ namespace PersonalFinanceTrackerDataAccess.Services
                     throw new Exception("Failed to create family.");
                 }
 
-                userRepo.AssignFamilyToUserAsync(headOfFamily, input, UserRole.HeadOfFamily);
+                userRepo.AssignFamilyToUser(headOfFamily, input, UserRole.HeadOfFamily);
                 
                 await _unitOfWork.SaveAsync();
                 await _unitOfWork.CommitAsync();

@@ -10,14 +10,14 @@ namespace PersonalFinanceTrackerDataAccess.Validators
 {
     public static class BudgetValidator
     {
-        public static void ValidateIsPersonal (this Budget budget)
+        public static void ValidatePersonalBudget (this User budgetUser)
         {
-            if (!budget.User.Exists())
+            if (!budgetUser.Exists())
             {
                 throw new ValidationException("User does not exist.");
             }
 
-            if (!budget.User.IsPartOfAFamily())
+            if (budgetUser.IsPartOfAFamily())
             {
                 throw new ValidationException("User is part of a family. Use the family budget instead.");
             }

@@ -9,7 +9,7 @@ namespace PersonalFinanceTrackerDataAccess.UnitOfWork
 {
     public interface IUnitOfWork : IDisposable
     {
-        TRepository GetRepository<TRepository, TEntity, TId>() where TEntity : class where TRepository : class, IRepository<TEntity, TId>;
+        TRepository GetRepository<TRepository>() where TRepository : class;
         IRepository<TEntity, TId> GetRepository<TEntity, TId>() where TEntity : class;
         Task BeginTransactionAsync();
         Task CommitAsync();
