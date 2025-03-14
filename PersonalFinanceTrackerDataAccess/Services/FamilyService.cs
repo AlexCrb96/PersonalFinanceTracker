@@ -17,12 +17,10 @@ namespace PersonalFinanceTrackerDataAccess.Services
     public class FamilyService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly FamilyValidator _familyValidator;
 
-        public FamilyService(IUnitOfWork unitOfWork, FamilyValidator familyValidator)
+        public FamilyService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _familyValidator = familyValidator;
         }
 
         public async Task<int> CreateFamilyAsync(Family input)
@@ -31,9 +29,10 @@ namespace PersonalFinanceTrackerDataAccess.Services
             var familyRepo = _unitOfWork.GetRepository<Family, int>();
 
             User? headOfFamily = await userRepo.GetByIdAsync(input.HeadOfFamilyId);
-            _familyValidator.ValidateHeadOfFamily(headOfFamily);
-
+            headOfFamily.ValidateHeadOfFamily();
+            
             input.HeadOfFamily = headOfFamily;
+            input.ValidateFamilyName();
 
             await _unitOfWork.BeginTransactionAsync();
             try
@@ -46,7 +45,7 @@ namespace PersonalFinanceTrackerDataAccess.Services
                     throw new Exception("Failed to create family.");
                 }
 
-                userRepo.AssignFamilyToUserAsync(headOfFamily, input, User.Role.HeadOfFamily);
+                userRepo.AssignFamilyToUserAsync(headOfFamily, input, UserRole.HeadOfFamily);
                 
                 await _unitOfWork.SaveAsync();
                 await _unitOfWork.CommitAsync();

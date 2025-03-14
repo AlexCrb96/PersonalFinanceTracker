@@ -3,18 +3,25 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PersonalFinanceTrackerDataAccess.Validators
 {
-    public class FamilyValidator
+    public static class FamilyValidator
     {
-        public void ValidateHeadOfFamily(User headOfFamily)
+        public static void ValidateHeadOfFamily(this User headOfFamily)
         {
-            if (headOfFamily == null)
+            if (!headOfFamily.Exists())
             {
-                throw new ValidationException("Head of family User not found.");
+                throw new ValidationException("Head of family not found.");
             }
 
-            if (headOfFamily.FamilyId != null)
+            if (!headOfFamily.IsPartOfAFamily())
             {
-                throw new ValidationException("User is already a member of a family.");
+                throw new ValidationException("Head of family is already part of a family.");
+            }
+        }
+        public static void ValidateFamilyName(this Family family)
+        {
+            if (string.IsNullOrWhiteSpace(family.Name))
+            {
+                family.Name = $"{family.HeadOfFamily.LastName}'s Family";
             }
         }
     }

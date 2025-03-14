@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PersonalFinanceTrackerAPI.DataTransferObjects.Requests;
+using PersonalFinanceTrackerAPI.Mapping.Requests;
 using PersonalFinanceTrackerDataAccess.Entities;
 using PersonalFinanceTrackerDataAccess.Services;
 using System.ComponentModel.DataAnnotations;
@@ -29,11 +30,7 @@ namespace PersonalFinanceTrackerAPI.Controllers
 
             try
             {
-                Family inputFamily = new Family
-                {
-                    Name = input.Name,
-                    HeadOfFamilyId = input.HeadOfFamilyId
-                };
+                Family inputFamily = input.ToFamily();
                 int familyId = await _familyService.CreateFamilyAsync(inputFamily);
                 return Ok($"FamilyId = {familyId}");
             }
