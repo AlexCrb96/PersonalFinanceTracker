@@ -94,10 +94,8 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<UserService>();
 
-builder.Services.AddScoped<FamilyValidator>();
 builder.Services.AddScoped<FamilyService>();
 
-builder.Services.AddScoped<BudgetValidator>();
 builder.Services.AddScoped<BudgetService>();
 
 builder.Services.AddAuthorization();
