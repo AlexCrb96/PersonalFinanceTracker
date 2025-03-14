@@ -5,8 +5,11 @@ using PersonalFinanceTrackerDataAccess.DataAccessContext;
 using PersonalFinanceTrackerDataAccess.Entities;
 using PersonalFinanceTrackerDataAccess.Repositories;
 using PersonalFinanceTrackerDataAccess.UnitOfWork;
+using PersonalFinanceTrackerDataAccess.Utilities;
+using PersonalFinanceTrackerDataAccess.Validators;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -25,37 +28,35 @@ namespace PersonalFinanceTrackerDataAccess.Services
             _signInManager = signInManager;
         }
 
-        public async Task<(bool Success, IEnumerable<string> Errors)> RegisterUserAsync(User input, string inputPassword)
+        public async Task<string> RegisterUserAsync(User input, string inputPassword)
         {
             var result = await _signInManager.UserManager.CreateAsync(input, inputPassword);
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
-                return (true, Array.Empty<string>());
+                throw new ValidationException(result.GetErrorMessage());
             }
-            else
-            {
-                return (false, result.Errors.Select(e => e.Description));
-            }
+
+            return input.Id;
         }
 
-        public async Task<(bool Success, User? User, string? Error)> LoginUserAsync(string email, string password)
+        public async Task<User> LoginUserAsync(User input, string inputPassword)
         {
             var userRepo = _unitOfWork.GetRepository<UserRepository, User, string>();
 
-            var user = await userRepo.FindByEmailAsync(email);
-            if (user == null)
+            User user = await userRepo.FindByEmailAsync(input.Email);
+
+            if (!user.Exists())
             {
-                return (false, user, "Invalid e-mail.");
+                throw new ValidationException("Invalid email.");
             }
 
-            var loginResult = await _signInManager.CheckPasswordSignInAsync(user, password, false);
+            var loginResult = await _signInManager.CheckPasswordSignInAsync(user, inputPassword, false);
             if (!loginResult.Succeeded)
             {
-                return (false, user, "Invalid password.");
+                throw new ValidationException("Invalid password.");
             }
 
-            return (true, user, null);
+            return user;
         }
-
     }
 }

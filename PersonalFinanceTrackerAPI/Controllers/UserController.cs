@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using PersonalFinanceTrackerAPI.DataTransferObjects.Requests;
+using PersonalFinanceTrackerAPI.Mapping.Requests;
 using PersonalFinanceTrackerDataAccess.Entities;
 using PersonalFinanceTrackerDataAccess.Services;
+using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -29,15 +31,27 @@ namespace PersonalFinanceTrackerAPI.Controllers
                 return BadRequest(ModelState);
             }
 
+            User inputUser = loginRequest.ToUser();
 
-            var (success, user, error) = await _userService.LoginUserAsync(loginRequest.Email, loginRequest.Password);
-            if (!success)
+            try
             {
-                return Unauthorized(error);
+                inputUser = await _userService.LoginUserAsync(inputUser, loginRequest.Password);
+            }
+            catch (ValidationException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return Problem(
+                    detail: ex.Message,
+                    statusCode: StatusCodes.Status500InternalServerError,
+                    title: "Unexpected Server Error.");
             }
 
-            var token = GenerateJwtToken(user);
+            var token = GenerateJwtToken(inputUser);
             return Ok(token);
+
         }
 
         [HttpPost("register")]
@@ -48,17 +62,22 @@ namespace PersonalFinanceTrackerAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            User input = new User
+            User input = registerRequest.ToUser();
+
+            try
             {
-                Email = registerRequest.Email,
-                UserName = registerRequest.Email,
-                FirstName = registerRequest.FirstName,
-                LastName = registerRequest.LastName
-            };
-            var (success, errors) = await _userService.RegisterUserAsync(input, registerRequest.Password);
-            if (!success)
+                string userId = await _userService.RegisterUserAsync(input, registerRequest.Password);
+            }
+            catch (ValidationException ex)
             {
-                return BadRequest(errors);
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return Problem(
+                   detail: ex.Message,
+                   statusCode: StatusCodes.Status500InternalServerError,
+                   title: "Unexpected Server Error.");
             }
             
             return Ok("User registered successfully.");
