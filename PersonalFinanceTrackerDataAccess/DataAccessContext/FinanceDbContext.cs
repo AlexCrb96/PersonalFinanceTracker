@@ -30,6 +30,7 @@ namespace PersonalFinanceTrackerDataAccess.DataAccessContext
             modelBuilder.Entity<Transaction>().Property(t => t.Type).HasConversion<string>().HasMaxLength(20);
             modelBuilder.Entity<RecurringTransaction>().Property(rt => rt.Frequency).HasConversion<string>().HasMaxLength(20);
             modelBuilder.Entity<User>().Property(u => u.FamilyRole).HasConversion<string>().HasMaxLength(20);
+            modelBuilder.Entity<Budget>().Property(b => b.Period).HasConversion<string>().HasMaxLength(20);
 
             // Define One-to-One relationship between Family and HeadOfFamily (User)
             modelBuilder.Entity<Family>()
