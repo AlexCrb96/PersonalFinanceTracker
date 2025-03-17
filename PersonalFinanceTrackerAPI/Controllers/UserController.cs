@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using PersonalFinanceTrackerAPI.Authentication;
 using PersonalFinanceTrackerAPI.DataTransferObjects.Requests;
 using PersonalFinanceTrackerAPI.Mapping.Requests;
 using PersonalFinanceTrackerDataAccess.Entities;
@@ -16,11 +17,11 @@ namespace PersonalFinanceTrackerAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly UserService _userService;
-        private readonly IConfiguration _configuration;
-        public UserController(UserService userService, IConfiguration configuration)
+        private readonly JwtProvider _jwtProvider;
+        public UserController(UserService userService, JwtProvider jwtProvider)
         {
             _userService = userService;
-            _configuration = configuration;
+            _jwtProvider = jwtProvider;
         }
 
         [HttpPost("login")]
@@ -49,7 +50,7 @@ namespace PersonalFinanceTrackerAPI.Controllers
                     title: "Unexpected Server Error.");
             }
 
-            var token = GenerateJwtToken(inputUser);
+            var token = _jwtProvider.GenerateJwtToken(inputUser);
             return Ok(token);
 
         }
@@ -81,35 +82,6 @@ namespace PersonalFinanceTrackerAPI.Controllers
             }
             
             return Ok("User registered successfully.");
-        }
-
-        private string GenerateJwtToken(User user)
-        {
-            var jwtSettings = _configuration.GetSection("JwtSettings");
-            var key = Encoding.UTF8.GetBytes(jwtSettings["Secret"]);
-
-            var claims = new List<Claim>
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email)
-            };
-
-            var credentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256);
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                NotBefore = DateTime.UtcNow,
-                Expires = DateTime.UtcNow.AddMinutes(Convert.ToDouble(jwtSettings["ExpiryMinutes"])),
-                Issuer = jwtSettings["Issuer"],
-                Audience = jwtSettings["Audience"],
-                SigningCredentials = credentials
-            };
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-
-            return tokenHandler.WriteToken(token);
         }
     }
 }

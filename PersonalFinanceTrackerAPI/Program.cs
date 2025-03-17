@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using PersonalFinanceTrackerAPI.Authentication;
 using PersonalFinanceTrackerDataAccess.DataAccessContext;
 using PersonalFinanceTrackerDataAccess.Entities;
 using PersonalFinanceTrackerDataAccess.Repositories;
@@ -36,7 +37,16 @@ builder.Services.AddDbContext<FinanceDbContext>(options =>
 });
 
 // Add Identity
-builder.Services.AddIdentity<User, IdentityRole>()
+builder.Services.AddIdentity<User, IdentityRole>(options =>
+{
+    options.User.RequireUniqueEmail = true;
+    // Password requirements - default values. Added for clarity
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequiredLength = 8;
+})
                 .AddEntityFrameworkStores<FinanceDbContext>()
                 .AddDefaultTokenProviders();
 
@@ -105,6 +115,8 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<FamilyService>();
 
 builder.Services.AddScoped<BudgetService>();
+
+builder.Services.AddScoped<JwtProvider>();
 
 builder.Services.AddAuthorization();
 
