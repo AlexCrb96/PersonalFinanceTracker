@@ -13,12 +13,13 @@ namespace PersonalFinanceTrackerDataAccess.Entities
     {
         public int Id { get; set; }
 
-        // TODO: make sure foreign keys are properly configured
         // Relationships
-        public required string UserId { get; set; } // Foreign key to User
-        public required User User { get; set; } // Each transaction belongs to one user
-        public required int CategoryId { get; set; } // Foreign key to Category
-        public required Category Category { get; set; } // Each transaction belongs to one category
+        [Required (ErrorMessage = "A transaction should always belong to a user.")]
+        public string UserId { get; set; } // Foreign key to User
+        public User User { get; set; } // Each transaction belongs to one user
+        [Required(ErrorMessage = "A transaction should always belong to a category.")]
+        public int CategoryId { get; set; } // Foreign key to Category
+        public Category Category { get; set; } // Each transaction belongs to one category
 
         // Transaction details
         [Required(ErrorMessage = "Transaction amount is required.")]
@@ -31,7 +32,5 @@ namespace PersonalFinanceTrackerDataAccess.Entities
         [Required(ErrorMessage = "Transaction type is required.")]
         public TransactionType Type { get; set; }
 
-
-        
     }
 }

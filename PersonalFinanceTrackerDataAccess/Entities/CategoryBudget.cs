@@ -12,10 +12,11 @@ namespace PersonalFinanceTrackerDataAccess.Entities
     {
         public int Id { get; set; }
 
-        // TODO: make sure foreign keys are properly configured
         // Relationships
+        [Required(ErrorMessage = "A category budget should always belong to a category.")]
         public int CategoryId { get; set; } // Foreign key to Category
         public Category Category { get; set; } // A budget can belong to a category
+        [Required(ErrorMessage = "A category budget should always belong to a general budget.")]
         public int BudgetId { get; set; } // Foreign key to Budget
         public Budget Budget { get; set; } // Each category budget belongs to a family’s general budget
 

@@ -11,7 +11,6 @@ namespace PersonalFinanceTrackerDataAccess.Entities
     {
         public int Id { get; set; }
 
-        // TODO: make sure foreign keys are properly configured
         // Relationships
         public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>(); // A category can have multiple transactions
         public ICollection<CategoryBudget> CategoryBudgets { get; set; } = new List<CategoryBudget>(); // A category can have multiple budgets

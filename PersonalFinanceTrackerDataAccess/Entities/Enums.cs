@@ -27,4 +27,12 @@ namespace PersonalFinanceTrackerDataAccess.Entities
         Income,
         Expense
     }
+
+    public enum FamilyInvitationStatus
+    {
+        Pending,
+        Accepted,
+        Declined,
+        Expired
+    }
 }
