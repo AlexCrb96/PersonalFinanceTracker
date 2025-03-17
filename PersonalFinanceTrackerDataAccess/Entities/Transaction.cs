@@ -20,6 +20,9 @@ namespace PersonalFinanceTrackerDataAccess.Entities
         [Required(ErrorMessage = "A transaction should always belong to a category.")]
         public int CategoryId { get; set; } // Foreign key to Category
         public Category Category { get; set; } // Each transaction belongs to one category
+        [Required(ErrorMessage = "A transaction should always belong to a budget.")]
+        public int BudgetId { get; set; } // Foreign key to Budget
+        public Budget Budget { get; set; } // Each transaction belongs to one budget
 
         // Transaction details
         [Required(ErrorMessage = "Transaction amount is required.")]
