@@ -109,7 +109,6 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<UserService>();
 
 builder.Services.AddScoped<FamilyService>();

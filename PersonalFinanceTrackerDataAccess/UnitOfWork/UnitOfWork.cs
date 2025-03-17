@@ -14,16 +14,25 @@ namespace PersonalFinanceTrackerDataAccess.UnitOfWork
     public class UnitOfWork : IUnitOfWork
     {
         private readonly FinanceDbContext _context;
-        private readonly IServiceProvider _serviceProvider;
         private IDbContextTransaction? _transaction;
+
+        private readonly Dictionary<Type, object> _customRepos = new();
 
         public UnitOfWork(FinanceDbContext db, IServiceProvider serviceProvider)
         {
             _context = db;
-            _serviceProvider = serviceProvider;
+
+            _customRepos[typeof(UserRepository)] = new UserRepository(_context);
         }
 
-        public TRepository GetRepository<TRepository>() where TRepository : class => (TRepository)_serviceProvider.GetRequiredService(typeof(TRepository));
+        public TRepository GetRepository<TRepository>() where TRepository : class
+        {
+            if (_customRepos.TryGetValue(typeof(TRepository), out object repo))
+            {
+                return (TRepository)repo;
+            }
+            throw new InvalidOperationException($"Repository of type {typeof(TRepository).Name} not found in custom repositories dictionary.");
+        }
 
         public IRepository<TEntity, TId> GetRepository<TEntity, TId>() where TEntity : class => new Repository<TEntity, TId>(_context);
 
