@@ -13,7 +13,7 @@ namespace PersonalFinanceTrackerDataAccess.Validators
     public static class UserValidator
     {
         public static bool Exists(this User user) => user != null;
-        public static bool IsPartOfAFamily(this User user) => user.FamilyId == null;
+        public static bool IsPartOfAFamily(this User user) => user.FamilyId != null;
 
         public static void ValidateRegisterResult(this IdentityResult result)
         {
