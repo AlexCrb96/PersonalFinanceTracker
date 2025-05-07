@@ -14,6 +14,7 @@ namespace PersonalFinanceTrackerDataAccess.Validators
     {
         public static bool Exists(this User user) => user != null;
         public static bool IsPartOfAFamily(this User user) => user.FamilyId != null;
+        public static bool HasRole(this User user, UserRole role) => user.FamilyRole == role;
 
         public static void ValidateRegisterResult(this IdentityResult result)
         {
@@ -27,7 +28,7 @@ namespace PersonalFinanceTrackerDataAccess.Validators
         {
             if (!user.Exists())
             {
-                throw new ValidationException("Invalid email.");
+                throw new KeyNotFoundException("Invalid email.");
             }
         }
 

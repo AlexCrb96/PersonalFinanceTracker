@@ -35,6 +35,10 @@ namespace PersonalFinanceTrackerAPI.Controllers
                 int budgetId = await _budgetService.CreatePersonalBudgetAsync(inputBudget);
                 return Ok($"BudgetId = {budgetId}");
             }
+            catch(KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
             catch (ValidationException ex)
             {
                 return BadRequest(ex.Message);

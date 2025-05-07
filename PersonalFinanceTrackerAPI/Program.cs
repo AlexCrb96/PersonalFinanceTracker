@@ -117,6 +117,8 @@ builder.Services.AddScoped<BudgetService>();
 
 builder.Services.AddScoped<JwtProvider>();
 
+builder.Services.AddScoped<UserHandler>();
+
 builder.Services.AddAuthorization();
 
 var app = builder.Build();

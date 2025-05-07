@@ -13,5 +13,15 @@ namespace PersonalFinanceTrackerAPI.Mapping.Requests
                 HeadOfFamilyId = input.HeadOfFamilyId
             };
         }
+
+        public static FamilyInvitation ToFamilyInvitation(this InviteUserToFamilyRequestDto input)
+        {
+            return new FamilyInvitation
+            {
+                Id = input.FamilyId,
+                RecipientEmail = input.RecipientEmail,
+                Status = FamilyInvitationStatus.Pending
+            };
+        }
     }
 }

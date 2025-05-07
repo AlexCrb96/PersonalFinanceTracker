@@ -30,7 +30,7 @@ namespace PersonalFinanceTrackerDataAccess.Services
 
             User? headOfFamily = await userRepo.GetByIdAsync(input.HeadOfFamilyId);
             headOfFamily.ValidateHeadOfFamily();
-            
+
             input.HeadOfFamily = headOfFamily;
             input.ValidateFamilyName();
 
@@ -46,7 +46,7 @@ namespace PersonalFinanceTrackerDataAccess.Services
                 }
 
                 userRepo.AssignFamilyToUser(headOfFamily, input, UserRole.HeadOfFamily);
-                
+
                 await _unitOfWork.SaveAsync();
                 await _unitOfWork.CommitAsync();
 
@@ -57,6 +57,49 @@ namespace PersonalFinanceTrackerDataAccess.Services
                 await _unitOfWork.RollbackAsync();
                 throw;
             }
+        }
+
+        public async Task<int> InviteUserToFamilyAsync(FamilyInvitation inputFamilyInvite, string token)
+        {
+            var userRepo = _unitOfWork.GetRepository<UserRepository>();
+            var familyRepo = _unitOfWork.GetRepository<Family, int>();
+            var familyInviteRepo = _unitOfWork.GetRepository<FamilyInvitation, int>();
+
+            User? sender = await userRepo.GetByIdAsync(inputFamilyInvite.SenderId);
+            sender.ValidateCanInvite();
+
+            Family? family = await familyRepo.GetByIdAsync(inputFamilyInvite.FamilyId);
+            family.ExistsAndOwnedBy(sender.Id);
+
+            await familyInviteRepo.EnsureNoDuplicateIniteAsync(inputFamilyInvite);
+
+            inputFamilyInvite.Token = token;
+            inputFamilyInvite.Status = FamilyInvitationStatus.Pending;
+            inputFamilyInvite.ExpirationDate = DateTime.UtcNow.AddDays(7);
+
+            // Start transaction
+            await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                await familyInviteRepo.AddAsync(inputFamilyInvite);
+                await _unitOfWork.SaveAsync();
+
+                if (inputFamilyInvite.Id == 0)
+                {
+                    throw new Exception("Failed to create invitation.");
+                }
+
+                // Send email
+
+                await _unitOfWork.CommitAsync();
+                return inputFamilyInvite.Id;
+            }
+            catch
+            {
+                await _unitOfWork.RollbackAsync();
+                throw;
+            }
+
         }
     }
 }

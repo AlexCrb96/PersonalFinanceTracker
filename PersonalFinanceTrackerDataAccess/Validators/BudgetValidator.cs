@@ -14,7 +14,7 @@ namespace PersonalFinanceTrackerDataAccess.Validators
         {
             if (!budgetUser.Exists())
             {
-                throw new ValidationException("User does not exist.");
+                throw new KeyNotFoundException("User does not exist.");
             }
 
             if (budgetUser.IsPartOfAFamily())

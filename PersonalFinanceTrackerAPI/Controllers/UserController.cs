@@ -38,6 +38,10 @@ namespace PersonalFinanceTrackerAPI.Controllers
             {
                 inputUser = await _userService.LoginUserAsync(inputUser, loginRequest.Password);
             }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
             catch (ValidationException ex)
             {
                 return Unauthorized(ex.Message);
@@ -50,7 +54,7 @@ namespace PersonalFinanceTrackerAPI.Controllers
                     title: "Unexpected Server Error.");
             }
 
-            var token = _jwtProvider.GenerateJwtToken(inputUser);
+            var token = _jwtProvider.GenerateAuthToken(inputUser);
             return Ok(token);
 
         }
