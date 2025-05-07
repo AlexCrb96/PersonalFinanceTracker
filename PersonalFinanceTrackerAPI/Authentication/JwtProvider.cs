@@ -15,26 +15,23 @@ namespace PersonalFinanceTrackerAPI.Authentication
             _configuration = configuration;
         }
 
-        public string GenerateJwtToken(User user)
+        private SigningCredentials GetSigningCredentials()
         {
-            var jwtSettings = _configuration.GetSection("JwtSettings");
-            var key = Encoding.UTF8.GetBytes(jwtSettings["Secret"]);
+            var secret = Encoding.UTF8.GetBytes(_configuration["JwtSettings:Secret"]);
+            return new SigningCredentials(new SymmetricSecurityKey(secret), SecurityAlgorithms.HmacSha256);
+        }
 
-            var claims = new List<Claim>
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email)
-            };
-
-            var credentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256);
+        private string GenerateToken(IEnumerable<Claim> claims, DateTime expires)
+        {
+            var credentials = GetSigningCredentials();
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
                 NotBefore = DateTime.UtcNow,
-                Expires = DateTime.UtcNow.AddMinutes(Convert.ToDouble(jwtSettings["ExpiryMinutes"])),
-                Issuer = jwtSettings["Issuer"],
-                Audience = jwtSettings["Audience"],
+                Expires = expires,
+                Issuer = _configuration["JwtSettings:Issuer"],
+                Audience = _configuration["JwtSettings:Audience"],
                 SigningCredentials = credentials
             };
 
@@ -42,6 +39,31 @@ namespace PersonalFinanceTrackerAPI.Authentication
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
             return tokenHandler.WriteToken(token);
+        }
+
+        public string GenerateAuthToken(User user)
+        {
+
+            var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email)
+            };
+
+            return GenerateToken(claims, DateTime.UtcNow.AddMinutes(Convert.ToDouble(_configuration["JwtSettings:ExpiryMinutes"])));
+        }
+
+        public string GenerateInvitationToken(FamilyInvitation invitation)
+        {
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, invitation.SenderId),
+                new Claim(ClaimTypes.Email, invitation.RecipientEmail),
+                new Claim("FamilyId", invitation.FamilyId.ToString()),
+                new Claim("InvitationStatus", invitation.Status.ToString())
+            };
+
+            return GenerateToken(claims, DateTime.UtcNow.AddDays(7));
         }
     }
 }
